@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>PokéRole — Battaglia</title>
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme');
+            document.documentElement.setAttribute('data-theme',
+                (t === 'light') ? 'light' : 'dark');
+        })();
+    </script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="battle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════════ -->
+<header class="battle-header">
+    <div class="battle-header-left">
+        <span id="hdr-weather" class="weather-badge">🌤️ —</span>
+        <span id="hdr-round"   class="round-badge">Round 1</span>
+    </div>
+    <div class="battle-header-right">
+        <button id="btn-stats-panel" class="hdr-btn" title="Statistiche">📊</button>
+        <button id="btn-disconnect"  class="hdr-btn hdr-btn-danger" title="Disconnetti">✕</button>
+    </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════
+     ARENA PRINCIPALE
+══════════════════════════════════════════════════════ -->
+<main class="battle-arena">
+
+    <!-- ── AVVERSARIO (in alto) ── -->
+    <section class="fighter-row fighter-opponent" id="fighter-opponent">
+        <div class="fighter-info">
+            <span class="trainer-name" id="opp-trainer-name">Avversario</span>
+            <div class="team-dots" id="opp-team-dots"></div>
+        </div>
+        <div class="fighter-pokemon">
+            <div class="pokemon-sprite-wrap">
+                <img id="opp-sprite" class="pokemon-sprite" src="" alt="" onerror="this.src='img/pokemon/unknown.png'">
+                <div id="opp-status-badge" class="status-badge hidden"></div>
+            </div>
+            <div class="pokemon-info-col">
+                <span class="pokemon-name" id="opp-pokemon-name">—</span>
+                <div class="hp-bar-wrap">
+                    <div class="hp-bar-track">
+                        <div class="hp-bar-fill" id="opp-hp-bar" style="width:100%"></div>
+                    </div>
+                    <span class="hp-text" id="opp-hp-text">—/—</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── CONSOLE TELECRONACA ── -->
+    <section class="battle-log-wrap">
+        <div class="battle-log" id="battle-log">
+            <p class="log-entry log-system">⚔️ Connessione in corso...</p>
+        </div>
+    </section>
+
+    <!-- ── IL TUO POKEMON (in basso) ── -->
+    <section class="fighter-row fighter-me" id="fighter-me">
+        <div class="fighter-pokemon">
+            <div class="pokemon-sprite-wrap">
+                <img id="my-sprite" class="pokemon-sprite" src="" alt="" onerror="this.src='img/pokemon/unknown.png'">
+                <div id="my-status-badge" class="status-badge hidden"></div>
+            </div>
+            <div class="pokemon-info-col">
+                <span class="pokemon-name" id="my-pokemon-name">—</span>
+                <div class="hp-bar-wrap">
+                    <div class="hp-bar-track">
+                        <div class="hp-bar-fill" id="my-hp-bar" style="width:100%"></div>
+                    </div>
+                    <span class="hp-text" id="my-hp-text">—/—</span>
+                </div>
+            </div>
+        </div>
+        <div class="fighter-info fighter-info-right">
+            <span class="trainer-name" id="my-trainer-name">Tu</span>
+            <div class="team-dots" id="my-team-dots"></div>
+        </div>
+    </section>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════
+     PANNELLO AZIONI (bottom)
+══════════════════════════════════════════════════════ -->
+<footer class="battle-actions" id="battle-actions">
+
+    <!-- Vista: mosse -->
+    <div class="actions-moves" id="actions-moves">
+        <div class="moves-grid" id="moves-grid">
+            <div class="move-card empty" id="move-0"></div>
+            <div class="move-card empty" id="move-1"></div>
+            <div class="move-card empty" id="move-2"></div>
+            <div class="move-card empty" id="move-3"></div>
+        </div>
+        <div class="special-actions-row">
+            <button class="switch-btn" id="btn-switch" onclick="apriSwitch()">🔄 Switch</button>
+            <button class="special-btn item-btn" id="btn-item-heal" onclick="apriItemHeal()">💊 Item Heal</button>
+            <button class="special-btn evade-btn" id="btn-evade" onclick="apriEvade()">🛡️ Evade</button>
+            <button class="special-btn clash-btn" id="btn-clash" onclick="apriClash()">⚔️ Clash</button>
+        </div>
+    </div>
+
+    <!-- Vista: attendi turno avversario -->
+    <div class="actions-wait hidden" id="actions-wait">
+        <div class="wait-indicator">
+            <span class="wait-spinner">⏳</span>
+            <span class="wait-text">Turno dell'avversario...</span>
+        </div>
+    </div>
+
+    <!-- Vista: battaglia terminata -->
+    <div class="actions-ended hidden" id="actions-ended">
+        <button class="btn-end-back" onclick="tornaAlTrainer()">← Torna al Trainer</button>
+    </div>
+
+</footer>
+
+<!-- ══════════════════════════════════════════════════════
+     PANNELLO STATISTICHE (slide-in laterale)
+══════════════════════════════════════════════════════ -->
+<aside class="stats-panel hidden" id="stats-panel">
+    <div class="stats-panel-header">
+        <span>📊 Statistiche in Campo</span>
+        <button onclick="chiudiStatsPanel()">✕</button>
+    </div>
+    <div class="stats-panel-body" id="stats-panel-body">
+        <!-- Popolato da battle.js -->
+    </div>
+</aside>
+<div class="stats-panel-overlay hidden" id="stats-panel-overlay" onclick="chiudiStatsPanel()"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL: DICHIARAZIONE MOSSA
+══════════════════════════════════════════════════════ -->
+<div class="battle-modal hidden" id="modal-mossa">
+    <div class="battle-modal-box">
+        <div class="battle-modal-header">
+            <span id="modal-mossa-title">Usa mossa</span>
+            <button id="btn-mini-mossa" onclick="miniModal('modal-mossa','btn-mini-mossa')" title="Minimizza">—</button>
+        </div>
+        <div class="battle-modal-body" id="modal-mossa-body">
+            <!-- Popolato dinamicamente -->
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL: TIRO DADI
+══════════════════════════════════════════════════════ -->
+<div class="battle-modal hidden" id="modal-dadi">
+    <div class="battle-modal-box">
+        <div class="battle-modal-header">
+            <span id="modal-dadi-title">Tiro Dadi</span>
+            <button id="btn-mini-dadi" onclick="miniModal('modal-dadi','btn-mini-dadi')" title="Minimizza">—</button>
+        </div>
+        <div class="battle-modal-body">
+            <p id="dadi-desc" class="dadi-desc"></p>
+            <div class="dadi-pool-info">
+                <span>Dadi: </span>
+                <span id="dadi-count" class="dadi-count-num">0</span>
+                <div class="dadi-adj">
+                    <button onclick="modificaDadi(-1)">−</button>
+                    <button onclick="modificaDadi(+1)">+</button>
+                </div>
+            </div>
+            <div class="dice-results-wrap" id="dadi-results"></div>
+            <button class="btn-roll-d6" onclick="tiraDado()">🎲 Tira d6</button>
+            <button class="btn-roll-confirm" onclick="confermaRisultatoDadi()">✅ Conferma risultato</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL: SWITCH POKEMON
+══════════════════════════════════════════════════════ -->
+<div class="battle-modal hidden" id="modal-switch">
+    <div class="battle-modal-box">
+        <div class="battle-modal-header">
+            <span>🔄 Cambia Pokémon</span>
+            <button onclick="chiudiSwitch()">✕</button>
+        </div>
+        <div class="battle-modal-body" id="modal-switch-body">
+            <!-- Popolato da battle.js -->
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL: APPLICA EFFETTO POST-DANNO
+══════════════════════════════════════════════════════ -->
+<div class="battle-modal hidden" id="modal-effetto">
+    <div class="battle-modal-box">
+        <div class="battle-modal-header">
+            <span>✨ Applica Effetto</span>
+            <button class="btn-mini-modal" onclick="miniModal('modal-effetto')" title="Minimizza">—</button>
+            <button onclick="_inviaEffettoEChiudi()">✕</button>
+        </div>
+        <div class="battle-modal-body" id="modal-effetto-body">
+            <!-- Popolato da battle.js -->
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SCHERMATA FINE BATTAGLIA
+══════════════════════════════════════════════════════ -->
+<div class="battle-end-screen hidden" id="battle-end-screen">
+    <div class="battle-end-content">
+        <img id="end-trainer-img" class="end-trainer-img" src="" alt="" onerror="this.style.display='none'">
+        <h1 id="end-trainer-name" class="end-trainer-name"></h1>
+        <p class="end-wins-label">WINS!</p>
+        <button class="btn-end-back" onclick="tornaAlTrainer()">← Torna al Trainer</button>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════ -->
+<script>
+(function () {
+    try {
+        if (window.parent !== window && window.parent.BattleBridge &&
+            typeof window.parent.BattleBridge.isConnected === 'function' &&
+            window.parent.BattleBridge.isConnected()) {
+            window.BattleBridge = window.parent.BattleBridge;
+            window.__POKEROLE_REUSE_P2P_BRIDGE__ = true;
+        }
+    } catch (e) { /* cross-origin */ }
+})();
+</script>
+<script src="utils/battle-bridge.js" defer></script>
+
+<script>
+    // Carica moveDataCollection e rendilo disponibile globalmente
+    fetch('utils/json/moveDataCollection.json')
+        .then(r => r.json())
+        .then(data => { window.moveDatabase = data.moveCollection ?? (Array.isArray(data) ? data : Object.values(data)); })
+        .catch(() => { window.moveDatabase = []; });
+    // Carica pokemonDataCollection per STAB e type effectiveness
+    fetch('utils/json/pokemonDataCollection.json')
+        .then(r => r.json())
+        .then(data => { window.pokedexDatabase = data.pokemonCollection; })
+        .catch(() => { window.pokedexDatabase = []; });
+</script>
+<script src="img/other/tabella.js"></script>
+<script src="utils/music-manager.js" defer></script>
+<script src="battle.js" defer></script>
+
+</body>
+</html>

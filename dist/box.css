@@ -1,0 +1,154 @@
+/* ============================================================
+   PC BOX — box.css
+   Il modal e la griglia. Le ball riusano .ball-slot di trainer.css
+   ============================================================ */
+
+/* ── Modal wrapper ── */
+#modal-box {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.72);
+    z-index: 3000;
+    justify-content: center;
+    align-items: center;
+}
+
+#modal-box-inner {
+    background: var(--sheet-bg, #1e1e2e);
+    border: 2px solid var(--accent-blue, #1877f2);
+    border-radius: 18px;
+    padding: 24px;
+    width: 92%;
+    max-width: 680px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+#modal-box-inner::-webkit-scrollbar {
+    width: 4px;
+    display: none;
+}
+
+#modal-box-inner::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#modal-box-inner::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+#modal-box-inner::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 600px) {
+    #modal-box-inner {
+        height: auto;
+        max-height: 60vh;
+        background-size: cover;
+        background-position: top center;
+    }
+    #box-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ── Header ── */
+.box-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.box-modal-header h2 {
+    margin: 0;
+    font-size: 1rem;
+    color: #dc0b0b;
+}
+
+.box-close-btn {
+    background: transparent;
+    border: 1px solid var(--border-color, #444);
+    color: #dc0b0b;
+    border-radius: 8px;
+    padding: 5px 14px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+.box-close-btn:hover { background: var(--input-bg, #333); }
+
+/* ── Griglia — riusa le ball-slot di trainer.css ── */
+#box-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    padding: 4px 0 8px;
+    justify-items: center;
+}
+#box-grid .ball-slot {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-width: 60px;
+}
+/* Lo slot "aggiungi" è una ball vuota normale, nessuna regola extra */
+
+/* ── Badge contatore nel pulsante header ── */
+#box-count {
+    display: inline-block;
+    background: var(--accent-blue, #1877f2);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 10px;
+    padding: 1px 6px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* ── Modal Pokedex del Box ── */
+#modal-box-pokedex {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.78);
+    z-index: 6000;
+    justify-content: center;
+    align-items: center;
+}
+
+#modal-box-pokedex .modal-content {
+    background: var(--sheet-bg, #1e1e2e);
+    padding: 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    border: 2px solid var(--accent-blue, #1877f2);
+}
+
+#box-pokedex-search {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #444);
+    background: var(--input-bg, #2a2a2e);
+    color: var(--text-color, #fff);
+    box-sizing: border-box;
+}
+
+#box-pokedex-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+    #box-grid { gap: 10px; }
+}

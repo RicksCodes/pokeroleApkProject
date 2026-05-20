@@ -1,0 +1,60 @@
+{
+  "setup": {
+    "attribute_list": ["Strength", "Vitality", "Dexterity", "Insight"],
+    "social_list": ["Tough", "Beauty", "Cool", "Cute", "Clever"],
+    "skill_list_1": [
+      "Brawl", "Throw", "Evasion", "Weapons"
+    ],
+    "skill_list_2": [
+      "Empathy", "Etiquette", "Intimidate", "Perform"
+    ],
+    "skill_list_3": [
+      "Alert", "Athletic", "Nature", "Stealth"
+    ],
+    "skill_list_4": [
+      "Crafts", "Lore", "Medicine", "Science"
+    ]
+  },
+  "base_stats": {
+    "attributes_default": 1,
+    "social_default": 1
+  },
+  "ranks": {
+    "Starter": {
+      "bonus_attr": 0,
+      "bonus_social": 0,
+      "skill_points": 5,
+      "max_skill_rank": 1
+    },
+    "Beginner": {
+      "bonus_attr": 2,
+      "bonus_social": 2,
+      "skill_points": 9,
+      "max_skill_rank": 2
+    },
+    "Amateur": {
+      "bonus_attr": 4,
+      "bonus_social": 4,
+      "skill_points": 12,
+      "max_skill_rank": 3
+    },
+    "Ace": {
+      "bonus_attr": 6,
+      "bonus_social": 6,
+      "skill_points": 14,
+      "max_skill_rank": 4
+    },
+    "Pro": {
+      "bonus_attr": 8,
+      "bonus_social": 8,
+      "skill_points": 15,
+      "max_skill_rank": 5
+    }
+  },
+  "age_bonuses": [
+    { "min": 10, "max": 13, "attr": 0, "social": 0 },
+    { "min": 14, "max": 20, "attr": 2, "social": 2 },
+    { "min": 21, "max": 60, "attr": 4, "social": 4 },
+    { "min": 61, "max": 100, "attr": 3, "social": 6 }
+  ]
+}

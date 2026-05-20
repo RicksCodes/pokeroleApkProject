@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <!-- Un solo viewport meta tag corretto con viewport-fit=cover per safe areas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1877f2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Trainer Sheet - PokéRole</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="trainer.css">
+    <link rel="stylesheet" href="utils/dice.css">
+
+    <link rel="stylesheet" href="box.css">
+    <script src="box.js" defer></script>
+
+    <script src="utils/menu.js" defer></script>
+    <script src="utils/music-manager.js" defer></script>
+    <script src="script.js" defer></script>
+    <script src="trainer.js" defer></script>
+    <script src="utils/pokemon-card.js" defer></script>
+    <script>window._isTrainerPage = true;</script>
+    <script src="utils/battle-bridge.js"></script>
+    <script src="battle-lobby.js"></script>
+    <script>
+    (function () {
+        window._enterBattleInline = function () {
+            if (typeof MusicManager !== 'undefined') MusicManager.stop();
+            const f = document.getElementById('battle-inline-frame');
+            if (!f) {
+                window.location.href = 'battle.html';
+                return;
+            }
+            f.style.display = 'block';
+            f.src = 'battle.html';
+        };
+        window._exitBattleInline = function () {
+            const f = document.getElementById('battle-inline-frame');
+            try {
+                if (f && f.contentWindow && typeof f.contentWindow.teardownBattleP2P === 'function') {
+                    f.contentWindow.teardownBattleP2P();
+                }
+            } catch (e) {}
+            if (f) {
+                f.src = 'about:blank';
+                f.style.display = 'none';
+            }
+            if (typeof MusicManager !== 'undefined') MusicManager.playForScreen('trainer');
+        };
+    })();
+    </script>
+</head>
+<body>
+    <iframe id="battle-inline-frame" title="Battaglia"
+        style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; width:100%; height:100%; border:0; z-index:9600; background:var(--bg-color,#111); box-sizing:border-box; padding-top:max(0px, env(safe-area-inset-top, 0px)); padding-bottom:max(0px, env(safe-area-inset-bottom, 0px)); padding-left:env(safe-area-inset-left, 0); padding-right:env(safe-area-inset-right, 0);"></iframe>
+    <header style="display:flex; justify-content:space-between; align-items:center; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px; border-bottom: 1px solid var(--border-color); background: var(--card-bg);">
+        <custom-menu></custom-menu>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <button id="btn-box" class="btn-edit" onclick="apriBox()">
+                📦 PC
+            </button>
+            <button id="btn-edit-mode" class="btn-edit" onclick="toggleEditMode()">
+                ✎ Edit Mode: OFF
+            </button>
+        </div>
+        <!-- <button id="btn-edit-mode" class="btn-edit" onclick="toggleEditMode()">
+            ✎ Edit Mode: OFF
+        </button> -->
+    </header>
+
+    <main class="sheet-container">
+        <!-- TOP SECTION: Foto + Attributi -->
+        <div class="top-section">
+            <div class="profile-aside">
+                <div class="photo-frame">
+                    <img id="trainer-img" src="" alt="Trainer Photo">
+                </div>
+                <div class="profile-header">
+                    <h2 id="display-nome">NAME</h2>
+                    <p id="display-rank">RANK</p>
+                    <div class="age-row">
+                        <span>Age:</span>
+                        <input type="number" id="in-age" value="" min="10" max="100" inputmode="numeric" disabled>
+                    </div>
+                </div>
+                <div class="vitals-row">
+                    <div class="vital-box">
+                        <span>HP</span>
+                        <strong id="val-hp">--</strong>
+                    </div>
+                    <div class="vital-box">
+                        <span>WILL</span>
+                        <strong id="val-will">--</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="attributes-main-column">
+                <div class="attributes-grid">
+                    <div class="attr-group">
+                        <h3>Physical Attributes</h3>
+                        <div class="row"><span>Strength</span><input type="number" data-stat="Strength" value="1" min="1" max="5" inputmode="numeric" disabled></div>
+                        <div class="row"><span>Vitality</span><input type="number" data-stat="Vitality" value="1" min="1" max="5" inputmode="numeric" disabled></div>
+                        <div class="row"><span>Dexterity</span><input type="number" data-stat="Dexterity" value="1" min="1" max="5" inputmode="numeric" disabled></div>
+                        <div class="row"><span>Insight</span><input type="number" data-stat="Insight" value="1" min="1" max="5" inputmode="numeric" disabled></div>
+                    </div>
+                    <div class="attr-group">
+                        <h3>Social Attributes</h3>
+                        <div class="row"><span>Tough</span><input type="number" data-stat="Tough" value="1" min="1" max="5" inputmode="numeric" disabled></div>
+                        <div class="row"><span>Beauty</span><input type="number" data-stat="Beauty" value="1" min="1" max="5" inputmode="numeric" disabled></div>
+                        <div class="row"><span>Cool</span><input type="number" data-stat="Cool" value="1" min="1" max="5" inputmode="numeric" disabled></div>
+                        <div class="row"><span>Cute</span><input type="number" data-stat="Cute" value="1" min="1" max="5" inputmode="numeric" disabled></div>
+                        <div class="row"><span>Clever</span><input type="number" data-stat="Clever" value="1" min="1" max="5" inputmode="numeric" disabled></div>
+                    </div>
+                </div>
+
+                <div class="middle-info-row">
+                    <div class="info-sub-box badges-extra-section">
+                        <div class="mini-section">
+                            <label>Badges</label>
+                            <div class="badge-slots">
+                                <div class="s badge-slot" data-badge="0" onclick="toggleBadge(0)"></div>
+                                <div class="s badge-slot" data-badge="1" onclick="toggleBadge(1)"></div>
+                                <div class="s badge-slot" data-badge="2" onclick="toggleBadge(2)"></div>
+                                <div class="s badge-slot" data-badge="3" onclick="toggleBadge(3)"></div>
+                                <div class="s badge-slot" data-badge="4" onclick="toggleBadge(4)"></div>
+                                <div class="s badge-slot" data-badge="5" onclick="toggleBadge(5)"></div>
+                                <div class="s badge-slot" data-badge="6" onclick="toggleBadge(6)"></div>
+                                <div class="s badge-slot" data-badge="7" onclick="toggleBadge(7)"></div>
+                            </div>
+                        </div>
+                        <div class="mini-section">
+                            <label>Extra</label>
+                            <div class="extra-slots">
+                                <div class="s" onclick="openExtraSection()"></div>
+                                <div class="s" onclick="openExtraSection()"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-sub-box identity-backpack-section">
+                        <div class="id-inputs">
+                            <div class="info-box" onclick="openTrainerNaturePicker()">
+                                <strong style="font-size:0.65em; color:#888; display:block; letter-spacing:0.06em; text-transform:uppercase;">NATURA</strong>
+                                <span id="trainer-nature-display">Seleziona</span>
+                            </div>
+                            <button class="btn-edit" onclick="apriConcept()">📖 Concept</button>
+                        </div>
+                        <button onclick="apriZaino()" class="btn-edit" style="width:100%; margin-top:8px;">💼 Backpack</button>
+
+                        <!-- MODAL ZAINO -->
+                        <div id="modal-zaino" class="modal">
+                            <div class="modal-content" style="max-width: 420px;">
+                                <div class="modal-header">
+                                    <h2>Inventario</h2>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="money-box">
+                                        <span>₽</span>
+                                        <input type="number" id="wallet-amount" value="1500" min="0" inputmode="numeric" onchange="salvaSoldi()">
+                                    </div>
+                                    <div id="lista-oggetti"></div>
+                                    <hr style="border-color: var(--border-color); margin: 14px 0;">
+                                    <div class="nuovo-oggetto-form">
+                                        <input type="text" id="item-nome" placeholder="Nome oggetto..." autocomplete="off">
+                                        <input type="number" id="item-qty" value="1" min="1" inputmode="numeric">
+                                        <button onclick="aggiungiOggetto()" class="btn-edit">+</button>
+                                    </div>
+                                    <div class="modal-inline-actions centered">
+                                        <button class="btn-close-compact" onclick="chiudiZaino()">Chiudi</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MODAL POKEDEX -->
+                        <div id="modal-pokedex" class="modal">
+                            <div class="modal-content" style="max-width: 420px;">
+                                <div class="modal-header">
+                                    <h3 style="margin:0; font-weight:800;">Seleziona Pokémon</h3>
+                                    <input type="text" id="pokedex-search" placeholder="Cerca..." oninput="filtraPokedex()" style="width:100%; margin-top:10px;" autocomplete="off">
+                                </div>
+                                <div id="pokedex-grid" class="pokedex-grid"></div>
+                                <div class="modal-inline-actions centered" style="padding: 10px 0 calc(10px + env(safe-area-inset-bottom,0px));">
+                                    <button class="btn-close-compact" onclick="chiudiPokedex()">Chiudi</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEAM BAR -->
+        <div class="team-bar">
+            <div class="team-label">ACTIVE<br>TEAM</div>
+            <div class="pokeball-container">
+                <div class="ball-slot" onclick="apriPokedex(0)"></div>
+                <div class="ball-slot" onclick="apriPokedex(1)"></div>
+                <div class="ball-slot" onclick="apriPokedex(2)"></div>
+                <div class="ball-slot" onclick="apriPokedex(3)"></div>
+                <div class="ball-slot" onclick="apriPokedex(4)"></div>
+                <div class="ball-slot" onclick="apriPokedex(5)"></div>
+            </div>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="skills-container">
+            <div class="skill-column">
+                <div class="row"><span>Brawl</span><input type="number" data-stat="Brawl" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Throw</span><input type="number" data-stat="Throw" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Evasion</span><input type="number" data-stat="Evasion" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Weapons</span><input type="number" data-stat="Weapons" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+            </div>
+            <div class="skill-column">
+                <div class="row"><span>Empathy</span><input type="number" data-stat="Empathy" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Etiquette</span><input type="number" data-stat="Etiquette" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Intimidate</span><input type="number" data-stat="Intimidate" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Perform</span><input type="number" data-stat="Perform" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+            </div>
+            <div class="skill-column">
+                <div class="row"><span>Alert</span><input type="number" data-stat="Alert" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Athletic</span><input type="number" data-stat="Athletic" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Nature</span><input type="number" data-stat="Nature" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Stealth</span><input type="number" data-stat="Stealth" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+            </div>
+            <div class="skill-column">
+                <div class="row"><span>Crafts</span><input type="number" data-stat="Crafts" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Lore</span><input type="number" data-stat="Lore" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Medicine</span><input type="number" data-stat="Medicine" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+                <div class="row"><span>Science</span><input type="number" data-stat="Science" class="skill-in" value="0" min="0" max="5" inputmode="numeric" disabled></div>
+            </div>
+        </div>
+    </main>
+
+<div id="modal-box">
+    <div id="modal-box-inner">
+        <div class="box-modal-header">
+            <h2>📦 PC</h2>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <button class="box-close-btn" onclick="chiudiBox()">✕ Exit</button>
+            </div>
+        </div>
+
+        <!-- Griglia dei pokémon nel box -->
+        <div id="box-grid"></div>
+
+        <!-- Menu contestuale (posizionato in modo assoluto rispetto a modal-box-inner) -->
+        <div id="box-context-menu"></div>
+    </div>
+</div>
+
+
+<!-- ⑤ MODAL POKEDEX per aggiungere al box ──────────────────── -->
+<div id="modal-box-pokedex">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Aggiungi al Box</h3>
+            <input type="text" id="box-pokedex-search" placeholder="Cerca Pokémon..."
+                   oninput="filtraBoxPokedex()">
+        </div>
+        <div id="box-pokedex-grid"></div>
+        <button onclick="chiudiBoxPokedex()"
+                style="margin-top:15px; width:100%; padding:8px; border-radius:8px; cursor:pointer;">
+            Chiudi
+        </button>
+    </div>
+</div>
+
+    <!-- MODAL SCELTA POKEMON (cambio/rimozione) -->
+    <div id="modal-scelta-pokemon" class="modal">
+        <div style="background:var(--sheet-bg); padding:22px; border-radius:18px; text-align:center; border:2px solid var(--border-color); width:90%; max-width:340px; margin:auto;">
+            <h4 id="titolo-scelta" style="margin-bottom:16px; font-weight:800;">What do you want to do?</h4>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                <button onclick="azioneSostituisci()" style="background:#28a745; color:white; padding:0 16px; height:44px; border:none; border-radius:10px; font-weight:800; cursor:pointer; font-family:inherit;">Change</button>
+                <button onclick="azioneEvolve()" style="background:#d5d224; color:white; padding:10px;">Evolve</button>
+                <button id="btn-mega-revert" style="background:#9b59b6; color:white; padding:10px; display:none;">↩ Revert Mega</button> 
+                <button onclick="azioneRimuovi()" style="background:#dc3545; color:white; padding:0 16px; height:44px; border:none; border-radius:10px; font-weight:800; cursor:pointer; font-family:inherit;">Remove</button>
+                <button onclick="chiudiModalScelta()" style="background:#6c757d; color:white; padding:0 16px; height:44px; border:none; border-radius:10px; font-weight:800; cursor:pointer; font-family:inherit;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DICE ROLLER -->
+    <div id="modal-dice" class="modal">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #6e8efb 0%, #a7a7af 100%); color: white;">
+                <h2>Dice Roller</h2>
+                <p style="color: rgba(255,255,255,0.8);">Tira i dadi per le tue prove</p>
+            </div>
+            <div class="modal-body">
+                <div class="dice-grid">
+                    <button class="btn-die" onclick="rollDice(4)">d4</button>
+                    <button class="btn-die" onclick="rollDice(6)">d6</button>
+                    <button class="btn-die" onclick="rollDice(8)">d8</button>
+                    <button class="btn-die" onclick="rollDice(10)">d10</button>
+                    <button class="btn-die" onclick="rollDice(12)">d12</button>
+                    <button class="btn-die" onclick="rollDice(20)">d20</button>
+                </div>
+                <div id="dice-results-container"></div>
+                <div class="modal-inline-actions">
+                    <button class="btn-close-compact" onclick="pulisciDadi()">Pulisci</button>
+                    <button class="btn-save" onclick="chiudiDiceRoller()">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONCEPT -->
+    <div id="modal-concept" class="modal">
+        <div class="modal-content" style="max-width:520px;">
+            <div class="modal-header">
+                <h3 style="margin:0; font-weight:800;">Concept</h3>
+            </div>
+            <div class="modal-body">
+                <textarea id="concept-text" placeholder="Descrizione del trainer..."></textarea>
+                <div class="modal-inline-actions centered">
+                    <button class="btn-close-compact" onclick="chiudiConcept()">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- ============================================================
+     BATTLE LOBBY MODAL
+     Da incollare dentro trainer.html, prima del tag </body>
+     ============================================================ -->
+
+<!-- Script CDN per QR (da aggiungere nell'<head> di trainer.html) -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>             -->
+<!-- <script src="utils/battle-bridge.js"></script>                                                   -->
+<!-- <script src="utils/battle-qr.js"></script>                                                       -->
+<!-- <script src="battle-lobby.js"></script>                                                    -->
+
+<!-- BOTTONE DA AGGIUNGERE NELL'HEADER DI TRAINER.HTML -->
+<!-- <button onclick="apriBattleLobby()" class="btn-multiplayer">⚔️ Multiplayer</button> -->
+
+<!-- ── MODAL PRINCIPALE LOBBY ── -->
+<div id="modal-battle-lobby" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:9000; flex-direction:column; align-items:center; justify-content:flex-start; overflow-y:auto; padding: 0 0 40px 0;">
+
+    <!-- Header -->
+    <div style="width:100%; max-width:480px; display:flex; align-items:center; justify-content:space-between; padding:16px 18px 0;">
+        <button id="lobby-btn-back" onclick="lobbyGoBack()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer; padding:4px 8px;">←</button>
+        <h2 id="lobby-title" style="margin:0; font-size:1.1rem; color:#fff; font-weight:700;">⚔️ Battaglia Multiplayer</h2>
+        <button onclick="chiudiBattleLobby()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer; padding:4px 8px;">✕</button>
+    </div>
+
+    <!-- Contenuto dinamico -->
+    <div id="lobby-content" style="width:100%; max-width:480px; padding:18px; display:flex; flex-direction:column; gap:16px; background:var(--card-bg); border-radius:16px; margin-top:8px;">
+        <!-- Viene popolato da battle-lobby.js -->
+    </div>
+</div>
+
+<!-- ── VIDEO/CANVAS NASCOSTI PER SCANSIONE QR ── -->
+<video id="lobby-qr-video" style="display:none;" playsinline muted></video>
+<canvas id="lobby-qr-canvas" style="display:none;"></canvas>
+
+
+    <pokemon-card-popup id="pokeCard"></pokemon-card-popup>
+
+    <script>
+    // Aggiorna il contatore nel pulsante Box ogni volta che renderBox viene chiamata
+    const _origRenderBox = window.renderBox;
+    document.addEventListener('DOMContentLoaded', () => {
+        // Patch di renderBox per aggiornare il badge
+        const patchRenderBox = () => {
+            const origRender = window.renderBox;
+            if (typeof origRender === 'function') {
+                window.renderBox = function() {
+                    origRender.call(this, ...arguments);
+                    const count = (window.currentTrainer?.box || []).length;
+                    const badge = document.getElementById('box-count');
+                    if (badge) badge.textContent = count;
+                };
+            }
+        };
+        // Aspetta che box.js sia caricato
+        setTimeout(patchRenderBox, 200);
+    });
+</script>
+</body>
+</html>

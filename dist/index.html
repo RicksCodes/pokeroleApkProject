@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <!-- Un solo viewport meta tag corretto — maximum-scale=1 evita zoom su focus -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- viewport-fit=cover abilita le safe area su notch/Dynamic Island -->
+    <meta name="theme-color" content="#1877f2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;">
+    <title>PokéRole Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="utils/dice.css">
+    <script src="utils/menu.js" defer></script>
+    <script src="utils/music-manager.js" defer></script>
+</head>
+<!-- <script>
+  fetch('utils/menu.js')
+    .then(r => alert('status: ' + r.status))
+    .catch(e => alert('ERRORE fetch: ' + e.message));
+</script> -->
+<body>
+
+    <div id="screen-main">
+        <header>
+            <custom-menu></custom-menu>
+            <h1>PokéRole Manager</h1>
+        </header>
+        <div id="trainer-grid" class="trainer-grid"></div>
+    </div>
+
+    <!-- MODAL CREAZIONE -->
+    <div id="modal-creazione" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>New Trainer</h2>
+                <p>Create your profile.</p>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="trainer-image">Trainer Photo</label>
+                    <div class="image-upload-wrapper">
+                        <input type="file" id="trainer-image" accept="image/*" onchange="previewImage(event)">
+                        <img id="image-preview" src="" alt="Preview">
+                        <span id="placeholder-text">Tap to upload</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-nome">Name</label>
+                    <input type="text" id="input-nome" placeholder="Es. Red" autocomplete="off">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="input-eta">Age</label>
+                        <input type="number" id="input-eta" min="10" max="99" value="10" inputmode="numeric">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-rango">Rank</label>
+                        <select id="input-rango"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-desc">Description</label>
+                    <textarea id="input-desc" rows="3" placeholder="Breve biografia..."></textarea>
+                </div>
+                <div class="modal-inline-actions">
+                    <button class="btn-close-compact" onclick="chiudiModal()">Cancel</button>
+                    <button class="btn-save" onclick="salvaNuovoAllenatore()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AZIONE TRAINER -->
+    <div id="modal-azione" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--accent-color) 0%, #8ac1ff 100%); color: white;">
+                <h2 id="azione-titolo">Trainer Name</h2>
+                <p style="color: rgba(255,255,255,0.8); margin-top: 4px;">Cosa vuoi fare con questo profilo?</p>
+            </div>
+            <div class="modal-body">
+                <div class="modal-buttons-vertical">
+                    <button class="btn-action-main" onclick="procediVisualizza()">
+                        <span class="icon">📖</span>
+                        <div class="text-group">
+                            <span class="title">Open Sheet</span>
+                            <span class="sub">Visualizza e modifica i dati</span>
+                        </div>
+                    </button>
+                    <button class="btn-action-secondary" onclick="chiediConfermaCancellazione()">
+                        <span class="icon">🗑️</span>
+                        <div class="text-group">
+                            <span class="title">Delete Trainer</span>
+                            <span class="sub">Rimuovi permanentemente</span>
+                        </div>
+                    </button>
+                </div>
+                <div class="modal-inline-actions centered">
+                    <button class="btn-close-compact" onclick="chiudiModalAzione()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFERMA ELIMINAZIONE -->
+    <div id="modal-conferma" class="modal">
+        <div class="modal-content" style="padding: 28px 24px; text-align: center;">
+            <h2 style="color: #dc3545; font-weight: 900; margin-bottom: 8px;">Are you sure?</h2>
+            <p style="opacity: 0.7; margin-bottom: 20px;">Questa azione non può essere annullata.</p>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="chiudiModalConferma()" style="border: 1.5px solid var(--border-color); border-radius: 10px;">No</button>
+                <button class="btn-save" style="background: #dc3545;" onclick="eliminaAllenatoreDefinitivo()">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DICE ROLLER -->
+    <div id="modal-dice" class="modal">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #6e8efb 0%, #a7a7af 100%); color: white;">
+                <h2>Dice Roller</h2>
+                <p style="color: rgba(255,255,255,0.8);">Tira i dadi per le tue prove</p>
+            </div>
+            <div class="modal-body">
+                <div class="dice-grid">
+                    <button class="btn-die" onclick="rollDice(4)">d4</button>
+                    <button class="btn-die" onclick="rollDice(6)">d6</button>
+                    <button class="btn-die" onclick="rollDice(8)">d8</button>
+                    <button class="btn-die" onclick="rollDice(10)">d10</button>
+                    <button class="btn-die" onclick="rollDice(12)">d12</button>
+                    <button class="btn-die" onclick="rollDice(20)">d20</button>
+                </div>
+                <div id="dice-results-container"></div>
+                <div class="modal-inline-actions">
+                    <button class="btn-close-compact" onclick="pulisciDadi()">Pulisci</button>
+                    <button class="btn-save" onclick="chiudiDiceRoller()">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,675 @@
+/* ============================================================
+   POKEROLE MANAGER — style.css (Mobile-First, Capacitor-Ready)
+   ============================================================ */
+
+/* --- FONT --- */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+/* --- CSS CUSTOM PROPERTIES --- */
+:root {
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --text-color: #1c1e21;
+    --border-color: #dddfe2;
+    --accent-color: #1877f2;
+    --hover-bg: #f2f2f2;
+    --danger-color: #dc3545;
+    --success-color: #28a745;
+
+    --tap-min: 48px;
+
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+}
+
+[data-theme="dark"] {
+    --bg-color: #18191a;
+    --card-bg: #242526;
+    --text-color: #e4e6eb;
+    --border-color: #3e4042;
+    --accent-color: #4599ff;
+    --hover-bg: #3a3b3c;
+}
+
+/* --- RESET & BASE --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* dvh support: ricalcola altezza escludendo tastiera virtuale */
+    height: 100%;
+}
+
+body {
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    padding-top: var(--safe-top);
+    padding-left: var(--safe-left);
+    padding-right: var(--safe-right);
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+    height: 100%;
+}
+
+/* Quando un modal è aperto, blocca lo scroll del background */
+body.modal-open {
+    overflow: hidden;
+}
+
+#screen-main {
+    padding: 16px;
+    padding-bottom: calc(16px + var(--safe-bottom));
+}
+
+/* --- HEADER --- */
+header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+}
+
+header h1 {
+    font-size: clamp(1.1rem, 4vw, 1.6rem);
+    font-weight: 900;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* --- FORM ELEMENTS --- */
+input, select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    /* ≥16px previene zoom automatico su iOS/Android */
+    font-size: 16px;
+    font-family: inherit;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.15);
+}
+
+textarea {
+    resize: none;
+    overflow-y: auto;
+    min-height: 80px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] { -moz-appearance: textfield; }
+
+/* --- GRIGLIA ALLENATORI --- */
+.trainer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 8px 0 24px;
+}
+
+@media (max-width: 360px) {
+    .trainer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+/* --- CARD COMUNI --- */
+.trainer-card, .add-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 18px 14px;
+    border: 1.5px solid var(--border-color);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 210px;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    will-change: transform;
+}
+
+.trainer-card:active, .add-card:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .trainer-card:hover, .add-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        border-color: var(--accent-color);
+    }
+}
+
+/* --- TRAINER CARD --- */
+.trainer-card .card-image-container {
+    width: 76px;
+    height: 76px;
+    min-width: 76px;
+    min-height: 76px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 12px;
+    border: 2px solid var(--border-color);
+    background: var(--hover-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trainer-card .card-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    background-color: rgba(0,0,0,0.03);
+    display: block;
+}
+
+.card-info strong {
+    font-size: 1rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 3px;
+    color: var(--text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
+}
+
+.desc-preview {
+    font-size: 0.72rem;
+    opacity: 0.65;
+    margin-top: 6px;
+    height: 2.4em;
+    line-height: 1.2em;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* --- ADD CARD --- */
+.add-card {
+    border: 2px dashed var(--border-color);
+    background: transparent;
+    gap: 12px;
+}
+
+.add-card .plus-icon {
+    width: 62px;
+    height: 62px;
+    min-width: 62px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-color) 0%, #8ac1ff 100%);
+    color: white;
+    font-size: 2.8rem;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: 0 4px 14px rgba(24, 119, 242, 0.3);
+}
+
+.add-card .add-text {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--accent-color);
+}
+
+/* ============================================================
+   MODALI — Fix Capacitor/Android
+   
+   Strategia:
+   - align-items: flex-end  → bottom-sheet, cresce verso l'alto
+   - max-height: dvh        → esclude tastiera virtuale (Android WebView 108+)
+   - display: flex + flex-direction: column su .modal-content
+   - Solo .modal-body scrolla; header e footer sono fissi
+   - body.modal-open blocca scroll background
+   ============================================================ */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.65);
+    /* flex-end = bottom-sheet: non viene mai tagliato in cima */
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 1000;
+    /* Nessun padding qui — lo gestisce .modal-content */
+    padding: 0;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    width: 100%;
+    max-width: 500px;
+
+    /* Bottom-sheet: angoli arrotondati solo in alto */
+    border-radius: 20px 20px 0 0;
+
+    /*
+     * max-height con fallback progressivo:
+     * 1. dvh (dynamic viewport height) = esclude tastiera su Android/iOS moderni
+     * 2. svh (small viewport height) = altezza minima garantita
+     * 3. vh = fallback per WebView meno recenti
+     * Il valore 92 lascia un piccolo spazio sopra per vedere lo sfondo scuro
+     */
+    max-height: 92dvh;
+    max-height: 92svh;
+    max-height: 92vh; /* fallback finale */
+
+    /* Flex colonna: header e footer fissi, solo body scrolla */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* il clip è sul contenitore, non sui figli */
+
+    /* Safe area per gesture bar Android/iPhone */
+    padding-bottom: var(--safe-bottom);
+
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-header {
+    padding: 16px 20px 14px;
+    background: var(--hover-bg);
+    border-bottom: 1px solid var(--border-color);
+    /* NON si comprime mai — rimane sempre visibile */
+    flex-shrink: 0;
+}
+
+.modal-header h2 {
+    margin: 0 0 2px;
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.modal-body {
+    padding: 18px 20px;
+    /* UNICA zona che scrolla */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Occupa tutto lo spazio disponibile tra header e footer */
+    flex: 1 1 auto;
+    /* Previene scroll chain verso il background */
+    overscroll-behavior: contain;
+}
+
+.modal-footer {
+    padding: 8px 16px;
+    padding-bottom: calc(8px + var(--safe-bottom));
+    background: var(--hover-bg);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+/* --- PULSANTI --- */
+.btn-save, .btn-primary {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0 22px;
+    height: var(--tap-min);
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.15s;
+}
+
+.btn-save:active, .btn-primary:active { opacity: 0.85; }
+
+.btn-cancel {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    height: var(--tap-min);
+    padding: 0 16px;
+    font-size: 15px;
+    font-family: inherit;
+    border-radius: 10px;
+}
+
+.btn-cancel:active { background: var(--hover-bg); }
+
+.btn-close-compact {
+    background: none;
+    border: 1.5px solid var(--border-color);
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 7px 28px;
+    height: auto;
+    font-size: 0.88rem;
+    font-weight: 700;
+    font-family: inherit;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    transition: background 0.15s;
+}
+.btn-close-compact:active { background: var(--hover-bg); }
+
+.btn-danger-outline {
+    border: 1.5px solid var(--danger-color);
+    color: var(--danger-color);
+    background: none;
+    padding: 0 16px;
+    height: var(--tap-min);
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* --- ACTION BUTTONS NEL MODAL --- */
+.modal-buttons-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-action-main, .btn-action-secondary {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1.5px solid var(--border-color);
+    background: var(--card-bg);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    width: 100%;
+    min-height: var(--tap-min);
+    font-family: inherit;
+}
+
+.btn-action-main .icon, .btn-action-secondary .icon {
+    font-size: 1.4rem;
+    margin-right: 14px;
+    background: var(--hover-bg);
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.btn-action-main .text-group, .btn-action-secondary .text-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-action-main .title, .btn-action-secondary .title {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.btn-action-main .sub, .btn-action-secondary .sub {
+    font-size: 0.72rem;
+    opacity: 0.6;
+    color: var(--text-color);
+    margin-top: 2px;
+}
+
+.btn-action-main:active { background: rgba(24, 119, 242, 0.06); border-color: var(--accent-color); }
+.btn-action-secondary:active { background: rgba(220, 53, 69, 0.06); border-color: var(--danger-color); }
+.btn-action-secondary .title { color: var(--danger-color); }
+
+@media (hover: hover) and (pointer: fine) {
+    .btn-action-main:hover { border-color: var(--accent-color); background: rgba(24, 119, 242, 0.05); }
+    .btn-action-secondary:hover { border-color: var(--danger-color); background: rgba(220, 53, 69, 0.05); }
+}
+
+/* --- MODAL CONFERMA ---
+   Eccezione: questo è centrato perché è un dialog piccolo, non un form
+   Usiamo align-items: center solo per questo specifico modal
+   tramite override inline nell'HTML oppure con una classe dedicata
+*/
+#modal-conferma {
+    align-items: center;
+    padding: 16px;
+}
+
+#modal-conferma .modal-content {
+    max-width: 340px;
+    border-radius: 20px; /* tutti e 4 gli angoli, è centrato */
+    text-align: center;
+}
+
+#modal-conferma .modal-body {
+    padding: 28px 24px;
+    overflow-y: visible; /* contenuto corto, no scroll necessario */
+    flex: none;
+}
+
+#modal-conferma h2 {
+    color: var(--danger-color);
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    font-weight: 900;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+/* --- UPLOAD IMMAGINE --- */
+.input-group {
+    margin-bottom: 16px;
+}
+
+.input-group > label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.image-upload-wrapper {
+    width: 100%;
+    height: 130px;
+    border: 2px dashed var(--border-color);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: rgba(0,0,0,0.02);
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+#trainer-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+#image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+    z-index: 1;
+    display: none;
+}
+
+#placeholder-text {
+    color: var(--text-color);
+    opacity: 0.5;
+    font-size: 0.9rem;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+/* --- FORM GROUPS --- */
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+/* --- DICE MODAL --- */
+#modal-dice {
+    z-index: 10001;
+}
+#modal-dice .modal-content {
+    max-width: 420px;
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+    #modal-dice {
+        align-items: center;
+        padding: 6px;
+    }
+    #modal-dice .modal-content {
+        border-radius: 14px;
+        max-height: 96vh;
+        width: 92%;
+        max-width: 500px;
+    }
+    #modal-dice .modal-body {
+        padding: 10px 14px;
+    }
+    #modal-dice .modal-header {
+        padding: 8px 16px;
+    }
+    #modal-dice .modal-header h2 {
+        font-size: 1rem;
+    }
+}
+
+/* Tasti inline in fondo al modal-body, al posto del footer */
+.modal-inline-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
+.modal-inline-actions.centered {
+    justify-content: center;
+}
+
+.dice-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px 0;
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+.dice-grid button, .btn-die {
+    width: 100%;
+    aspect-ratio: 1;
+    min-height: var(--tap-min);
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 0 var(--border-color);
+    position: relative;
+    top: 0;
+    transition: all 0.1s ease;
+}
+
+.dice-grid button:active {
+    top: 3px;
+    box-shadow: none;
+    transform: scale(0.95);
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .dice-grid button:hover {
+        background: var(--accent-color);
+        color: white;
+        border-color: var(--accent-color);
+    }
+}
