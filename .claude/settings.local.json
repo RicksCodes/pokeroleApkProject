@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(node --check \"c:\\\\Users\\\\ricky\\\\Desktop\\\\ai-workspace\\\\pokeroleApkProject_finalWorkspace\\\\dist\\\\battle.js\")",
-      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\ricky\\\\Desktop\\\\ai-workspace\\\\pokeroleApkProject_finalWorkspace\" -Force)",
-      "Bash(Select-Object FullName, PSIsContainer)"
-    ]
-  }
-}
