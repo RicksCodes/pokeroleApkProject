@@ -290,6 +290,9 @@ class CustomMenu extends HTMLElement {
                 <div class="menu-item">
                     <button class="menu-btn" id="coming-soon-2-btn" role="menuitem">🤒 Status Conditions</button>
                 </div>
+                <div class="menu-item">
+                    <button class="menu-btn" id="legal-btn" role="menuitem">⚖️ Legal Notice</button>
+                </div>
                 <div class="menu-sep"></div>
                 <div class="menu-item">
                     <button class="menu-btn" id="export-btn" role="menuitem">📤 Export JSON</button>
@@ -325,6 +328,7 @@ class CustomMenu extends HTMLElement {
         const importInput     = this._root.querySelector('#import-input');
         const comingSoon1Btn  = this._root.querySelector('#coming-soon-1-btn');
         const comingSoon2Btn  = this._root.querySelector('#coming-soon-2-btn');
+        const legalBtn        = this._root.querySelector('#legal-btn');
 
         // Toggle menu apri/chiudi
         btn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.toggle('show'); });
@@ -402,6 +406,13 @@ class CustomMenu extends HTMLElement {
         comingSoon2Btn.addEventListener('click', (e) => {
             e.preventDefault();
             if (window.apriStatusConditions) window.apriStatusConditions();
+            menu.classList.remove('show');
+        });
+
+        // Legal Notice
+        legalBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (window.apriLegalNotice) window.apriLegalNotice();
             menu.classList.remove('show');
         });
 
@@ -675,4 +686,50 @@ window.apriStatusConditions = function() {
         </div>`).join('');
 
     _creaModalInfo('modal-status-conditions', '🤒 Status Conditions', statuses);
+};
+
+/* ============================================================
+   LEGAL NOTICE
+   ============================================================ */
+
+window.apriLegalNotice = function() {
+    const readmeUrl = 'https://github.com/RicksCodes/pokeroleApkProject/blob/main/README.md';
+
+    function _openLink(url) {
+        if (window.Capacitor?.Plugins?.Browser) {
+            Capacitor.Plugins.Browser.open({ url });
+        } else {
+            window.open(url, '_blank');
+        }
+    }
+
+    _creaModalInfo('modal-legal-notice', '⚖️ Legal Notice', `
+        <div style="background:var(--hover-bg,#f2f2f2);border-left:4px solid #e74c3c;padding:14px;border-radius:8px;">
+            <p style="margin:0 0 10px;font-size:0.95em;line-height:1.7;color:var(--text-color,#1c1e21);">
+                This is a <strong>non-profit, fan-made application</strong> created purely for entertainment purposes,
+                born after receiving the Pokérole book PDF without knowing anything about it,
+                with the hope that it can help those who, like me, didn't understand much and always forget something.
+            </p>
+            <p style="margin:0 0 10px;font-size:0.9em;line-height:1.7;color:var(--text-color,#1c1e21);">
+                All media assets used (including sprites, images, and music) are property of their respective owners
+                and were sourced from online databases or directly from the games.
+                <strong>No copyright infringement is intended.</strong>
+            </p>
+            <p style="margin:0;font-size:0.9em;line-height:1.7;color:var(--text-color,#1c1e21);">
+                My original contributions are strictly limited to the HTML, CSS, and JS source code.
+            </p>
+        </div>
+        <div style="text-align:center;margin-top:4px;">
+            <button onclick="(${_openLink.toString()})('${readmeUrl}')"
+                style="
+                    display:inline-flex;align-items:center;gap:8px;
+                    background:#24292e;color:#fff;border:none;border-radius:10px;
+                    padding:12px 20px;font-size:0.95em;font-weight:700;cursor:pointer;
+                    font-family:'Nunito','Segoe UI',sans-serif;
+                    -webkit-tap-highlight-color:transparent;
+                ">
+                📖 Read full README on GitHub
+            </button>
+        </div>
+    `);
 };
