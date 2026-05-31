@@ -2,7 +2,8 @@
    POKEROLE MANAGER — trainer.js (Mobile-Optimized)
    ============================================================ */
 function getPokemonImgSrc(nome) {
-    return `img/pokemon/${nome.toLowerCase()}.png`;
+    const slug = nome.toLowerCase().replace(/-mega(?= [a-z])/g, ' - mega');
+    return `img/pokemon/${slug}.png`;
 }
 
 let currentTrainer = null;
